@@ -32,7 +32,7 @@ export default class AscensionDiscordBot {
       //HANDLE SWAP TX
       if (from === ASCEND_SUSHI_POOL) {
         const embed = new MessageEmbed()
-          .setColor('#FFFFFF')
+          .setColor('#10B981')
           .setTitle('New ASCEND buy order')
           .setURL(`https://arbiscan.io/tx/${event.transactionHash}`)
           .setTimestamp(new Date())
@@ -46,7 +46,7 @@ export default class AscensionDiscordBot {
       }
       if (to === ASCEND_SUSHI_POOL) {
         const embed = new MessageEmbed()
-          .setColor('#FFFFFF')
+          .setColor('#EF4444')
           .setTitle('New ASCEND sell order')
           .setURL(`https://arbiscan.io/tx/${event.transactionHash}`)
           .setTimestamp(new Date())
@@ -61,7 +61,7 @@ export default class AscensionDiscordBot {
       //HANDLE STAKING TX
       if (to === ASCEND_STAKING) {
         const embed = new MessageEmbed()
-          .setColor('#FFFFFF')
+          .setColor('#10B981')
           .setTitle('ASCEND staking deposit')
           .setURL(`https://arbiscan.io/tx/${event.transactionHash}`)
           .setTimestamp(new Date())
@@ -74,7 +74,7 @@ export default class AscensionDiscordBot {
       }
       if (from === ASCEND_STAKING) {
         const embed = new MessageEmbed()
-          .setColor('#FFFFFF')
+          .setColor('#EF4444')
           .setTitle('ASCEND staking withdrawal')
           .setURL(`https://arbiscan.io/tx/${event.transactionHash}`)
           .setTimestamp(new Date())
