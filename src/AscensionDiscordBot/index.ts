@@ -2,7 +2,7 @@ import { Client, MessageEmbed, TextChannel } from 'discord.js'
 import { LOG_CHANNEL_ID, TRADING_CHANNEL_ID } from '../constants/discord'
 import { BigNumber, ethers, Event } from 'ethers'
 
-import { ASCEND_SUSHI_POOL } from '../constants/addresses'
+import { ASCEND_STAKING, ASCEND_SUSHI_POOL } from '../constants/addresses'
 
 export default class AscensionDiscordBot {
   private _client: Client
@@ -29,6 +29,7 @@ export default class AscensionDiscordBot {
     this._log(`Started ASCEND Transfer watchdog @ ${new Date(Date.now()).toUTCString()}`)
 
     this._token.on('Transfer', (from: string, to: string, value: BigNumber, event: Event) => {
+      //HANDLE SWAP TX
       if (from === ASCEND_SUSHI_POOL) {
         const embed = new MessageEmbed()
           .setColor('#FFFFFF')
@@ -43,7 +44,6 @@ export default class AscensionDiscordBot {
         tradingChannel.send({ embeds: [embed] })
         return
       }
-
       if (to === ASCEND_SUSHI_POOL) {
         const embed = new MessageEmbed()
           .setColor('#FFFFFF')
@@ -58,6 +58,35 @@ export default class AscensionDiscordBot {
         return
       }
 
+      //HANDLE STAKING TX
+      if (to === ASCEND_STAKING) {
+        const embed = new MessageEmbed()
+          .setColor('#FFFFFF')
+          .setTitle('ASCEND staking deposit')
+          .setURL(`https://arbiscan.io/tx/${event.transactionHash}`)
+          .setTimestamp(new Date())
+          .addFields([
+            { name: 'Account', value: from },
+            { name: 'Amount', value: `${ethers.utils.formatUnits(value)} ASCEND` },
+          ])
+        tradingChannel.send({ embeds: [embed] })
+        return
+      }
+      if (from === ASCEND_STAKING) {
+        const embed = new MessageEmbed()
+          .setColor('#FFFFFF')
+          .setTitle('ASCEND staking withdrawal')
+          .setURL(`https://arbiscan.io/tx/${event.transactionHash}`)
+          .setTimestamp(new Date())
+          .addFields([
+            { name: 'Account', value: to },
+            { name: 'Amount', value: `${ethers.utils.formatUnits(value)} ASCEND` },
+          ])
+        tradingChannel.send({ embeds: [embed] })
+        return
+      }
+
+      //HANDLE REGULAR TRANSFER TX
       const embed = new MessageEmbed()
         .setColor('#FFFFFF')
         .setTitle('New ASCEND transfer')
