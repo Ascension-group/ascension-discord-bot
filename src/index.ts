@@ -22,6 +22,7 @@ async function main() {
     const ascensionBot = new AscensionDiscordBot(client, provider, token)
 
     ascensionBot.subscribeToTransfers()
+    ascensionBot.watchPrice()
   })
 }
 

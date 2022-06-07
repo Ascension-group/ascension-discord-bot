@@ -3,6 +3,7 @@ import { LOG_CHANNEL_ID, TRADING_CHANNEL_ID } from '../constants/discord'
 import { BigNumber, ethers, Event } from 'ethers'
 
 import { ASCEND_STAKING, ASCEND_SUSHI_POOL } from '../constants/addresses'
+import axios from 'axios'
 
 export default class AscensionDiscordBot {
   private _client: Client
@@ -100,5 +101,33 @@ export default class AscensionDiscordBot {
       tradingChannel.send({ embeds: [embed] })
       return
     })
+  }
+
+  watchPrice() {
+    setInterval(() => {
+      axios
+        .get(
+          'https://api.coingecko.com/api/v3/simple/token_price/arbitrum-one?contract_addresses=0x9e724698051da34994f281bd81c3e7372d1960ae&vs_currencies=usd'
+        )
+        .then((res) => {
+          if (res.status != 200) {
+            this._log(`Invalid status returned from coingecko price API call: ${res.status}`)
+            return
+          }
+
+          this._client.user?.setActivity(
+            `ASCEND Price: $${res.data['0x9e724698051da34994f281bd81c3e7372d1960ae'].usd
+              .toPrecision(3)
+              .toString()}`,
+            {
+              type: 'WATCHING',
+            }
+          )
+        })
+        .catch((err) => {
+          this._log(`Failed to fetch ASCEND price from coingecko API: ${err}`)
+          return
+        })
+    }, 60000)
   }
 }
